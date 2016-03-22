@@ -67,7 +67,7 @@ def detect_anoms(data, k=0.49, alpha=0.05, num_obs_per_period=None,
         resample_period = resample_period.get(num_obs_per_period)
         if not resample_period:
             raise ValueError('Unsupported resample period: %d' %resample_period)
-        data = data.resample(resample_period)
+        data = data.resample(resample_period, how='sum')
 
     decomp = stl(data.value, np=num_obs_per_period)
 
