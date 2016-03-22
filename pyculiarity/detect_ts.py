@@ -23,7 +23,7 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
 
     Args:
 
-    x: Time series as a two column data frame where the first column consists of the integer UTC Unix
+    df: Time series as a two column data frame where the first column consists of the integer UTC Unix
     timestamps and the second column consists of the observations.
 
     max_anoms: Maximum number of anomalies that S-H-ESD will detect as a percentage of the
@@ -32,8 +32,6 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
     direction: Directionality of the anomalies to be detected. Options are: ('pos' | 'neg' | 'both').
 
     alpha: The level of statistical significance with which to accept or reject anomalies.
-
-    only_last: Find and report anomalies only within the last day or hr in the time series. Options: (None | 'day' | 'hr')
 
     threshold: Only report positive going anoms above the threshold specified. Options are: (None | 'med_max' | 'p95' | 'p99')
 
@@ -44,6 +42,12 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
     See Details below.
     piecewise_median_period_weeks: The piecewise median time window as described in Vallis, Hochenbaum, and Kejariwal
     (2014). Defaults to 2.
+
+    granularity: The granularity of the time series. Options are: ( 'ms' | 'sec' | 'min' | 'hr' | 'day' )
+
+    verbose: Enables verbose mode
+
+    inplace: Changes the dataframe in place
 
     Details
 
