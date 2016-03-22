@@ -115,6 +115,8 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
         'ms': 60000,
         'sec': 3600,
         'min': 1440,
+        '5min': 288,
+        'qrtr': 96,
         'hr': 24,
         'day': 7
     }

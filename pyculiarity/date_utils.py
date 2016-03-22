@@ -21,6 +21,10 @@ def get_gran(tsdf, index=0):
         return "day"
     elif gran >= 3600:
         return "hr"
+    elif gran >= 900:
+        return "qrtr"
+    elif gran >= 300:
+        return "5min"
     elif gran >= 60:
         return "min"
     elif gran >= 1:
