@@ -15,7 +15,8 @@ Direction = namedtuple('Direction', ['one_tail', 'upper_tail'])
 
 
 def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e_value=False, longterm=False,
-              piecewise_median_period_weeks=2, granularity='day', verbose=False, inplace=True):
+              piecewise_median_period_weeks=2, granularity='day', resample_strategy='mean', verbose=False,
+              inplace=True):
     """
     Anomaly Detection Using Seasonal Hybrid ESD Test
     A technique for detecting anomalies in seasonal univariate time series where the input is a
@@ -44,6 +45,8 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
     (2014). Defaults to 2.
 
     granularity: The granularity of the time series. Options are: ( 'ms' | 'sec' | 'min' | 'hr' | 'day' )
+
+    resample_strategy: Sets the resample strategy in case the granularity of the data does not corresponds to granularity in the parameter. Options are ( 'mean' | 'sum' | 'min' | 'max' | 'median')
 
     verbose: Enables verbose mode
 
@@ -86,7 +89,8 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
     # Sanity check all input parameters
     if max_anoms > 0.49:
         length = len(df.value)
-        raise ValueError("max_anoms must be less than 50%% of the data points (max_anoms =%f data_points =%s)." % (round(max_anoms * length, 0), length))
+        raise ValueError("max_anoms must be less than 50%% of the data points (max_anoms =%f data_points =%s)." % (
+        round(max_anoms * length, 0), length))
 
     if direction not in ['pos', 'neg', 'both']:
         raise ValueError("direction options are: pos | neg | both.")
@@ -105,6 +109,9 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
     if not isinstance(longterm, bool):
         raise ValueError("longterm must be a boolean")
 
+    if resample_strategy not in ['mean', 'sum', 'min', 'max', 'median']:
+        raise ValueError("resample_strategy options are: ( 'mean' | 'sum' | 'min' | 'max' | 'median' )")
+
     if piecewise_median_period_weeks < 2:
         raise ValueError(
             "piecewise_median_period_weeks must be at greater than 2 weeks")
@@ -122,7 +129,7 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
     }
     period = gran_period.get(gran)
     if not period:
-        raise ValueError('%s granularity detected. This is currently not supported.' % (gran, ))
+        raise ValueError('%s granularity detected. This is currently not supported.' % (gran,))
 
     # now convert the timestamp column into a proper timestamp
     df['timestamp'] = df['timestamp'].map(lambda x: datetime.datetime.utcfromtimestamp(x))
@@ -153,7 +160,8 @@ def detect_ts(df, max_anoms=0.10, direction='pos', alpha=0.05, threshold=None, e
             if (end_date - start_date).days == num_days_in_period:
                 sub_df = df[(df.timestamp >= start_date) & (df.timestamp < end_date)]
             else:
-                sub_df = df[(df.timestamp > (last_date - datetime.timedelta(days=num_days_in_period))) & (df.timestamp <= last_date)]
+                sub_df = df[(df.timestamp > (last_date - datetime.timedelta(days=num_days_in_period))) & (
+                df.timestamp <= last_date)]
             all_data.append(sub_df)
     else:
         all_data = [df]

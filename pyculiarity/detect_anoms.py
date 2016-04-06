@@ -11,7 +11,7 @@ from pyculiarity.stl import stl
 
 
 def detect_anoms(data, k=0.49, alpha=0.05, num_obs_per_period=None,
-                 use_decomp=True, one_tail=True, upper_tail=True, verbose=False):
+                 use_decomp=True, resample_strategy='mean', one_tail=True, upper_tail=True, verbose=False):
     """
     # Detects anomalies in a time series using S-H-ESD.
     #
@@ -67,7 +67,7 @@ def detect_anoms(data, k=0.49, alpha=0.05, num_obs_per_period=None,
         resample_period = resample_period.get(num_obs_per_period)
         if not resample_period:
             raise ValueError('Unsupported resample period: %d' %resample_period)
-        data = data.resample(resample_period, how='sum')
+        data = data.resample(resample_period, how=resample_strategy)
 
     decomp = stl(data.value, np=num_obs_per_period)
 
